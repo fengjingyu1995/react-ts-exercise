@@ -19,6 +19,7 @@ const defaultUserFormData ={
 
 function App() {
   const [userFormData, setUserFormData] = useState<UserFormData>(defaultUserFormData) 
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = event.target
     setUserFormData({ ...userFormData, [name]: value });
@@ -26,6 +27,8 @@ function App() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // reset form
+    setUserFormData(defaultUserFormData)
     console.log(userFormData)
   };
 
