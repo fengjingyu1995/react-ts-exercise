@@ -9,31 +9,31 @@ interface UserFormData {
   address: string;
 }
 
-const defaultUserFormData ={
+const defaultUserFormData = {
   firstName: '',
   lastName: '',
   phoneNumber: '',
   address: '',
-}
-
+};
 
 function App() {
-  const [userFormData, setUserFormData] = useState<UserFormData>(defaultUserFormData) 
+  const [userFormData, setUserFormData] =
+    useState<UserFormData>(defaultUserFormData);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = event.target
+    const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // reset form
-    setUserFormData(defaultUserFormData)
-    console.log(userFormData)
+    setUserFormData(defaultUserFormData);
+    console.log(userFormData);
   };
 
   return (
-    <div>
+    <div className="max-w-xs px-5 pb-5 bg-gray-50">
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -67,14 +67,17 @@ function App() {
           value={userFormData.address}
           onChange={handleChange}
         />
-        <Button 
-          color="primary" 
-          variant="contained" 
-          fullWidth 
-          type="submit"
-        > 
-          Submit 
-        </Button>
+        <div className="py-5">
+          <Button
+            color="primary"
+            variant="contained"
+            fullWidth
+            type="submit"
+            className="m-4"
+          >
+            Submit
+          </Button>
+        </div>
       </form>
     </div>
   );
