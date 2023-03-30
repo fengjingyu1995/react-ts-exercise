@@ -11,7 +11,7 @@ const defaultUserFormData = {
   address: '',
 };
 
-function Form() {
+function UserForm() {
   const [userFormData, setUserFormData] =
     useState<UserFormData>(defaultUserFormData);
   const [userFormDataErrors, setUserFormDataErrors] =
@@ -98,4 +98,4 @@ function Form() {
   );
 }
 
-export default Form;
+export default UserForm;
