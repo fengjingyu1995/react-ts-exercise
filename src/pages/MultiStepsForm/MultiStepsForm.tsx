@@ -60,6 +60,8 @@ function MultiStepsForm() {
     setActiveStep(step);
   };
 
+  const title = steps[activeStep];
+
   return (
     <Box
       sx={{
@@ -90,18 +92,18 @@ function MultiStepsForm() {
             <UserForm
               userFormData={userFormData}
               updateFormData={updateFormData}
-              title={steps[0]}
+              title={title}
             />
           )}
           {activeStep === 1 && (
             <PokemonForm
               userFormData={userFormData}
               updateFormData={updateFormData}
-              title={steps[0]}
+              title={title}
             />
           )}
           {activeStep === 2 && (
-            <ReviewPage userFormData={userFormData} title={steps[0]} />
+            <ReviewPage userFormData={userFormData} title={title} />
           )}
         </Box>
 
