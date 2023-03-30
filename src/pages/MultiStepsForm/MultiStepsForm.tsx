@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import PokemonForm from './PokemonForm/PokemonForm';
 import UserForm from './UserInfoForm/UserInfoForm';
 import { UserFormData } from './userForm.model';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
   'User Info',
@@ -26,6 +27,9 @@ function MultiStepsForm() {
   const [userFormData, setUserFormData] =
     useState<UserFormData>(initialUserFormData);
   const [activeStep, setActiveStep] = React.useState(0);
+
+  const navigate = useNavigate();
+
   const updateFormData = (data: Partial<UserFormData>) => {
     setUserFormData((prevUserFormData) => ({ ...prevUserFormData, ...data }));
   };
@@ -42,6 +46,7 @@ function MultiStepsForm() {
     e.preventDefault();
     if (isLastStep()) {
       // complete
+      navigate('/complete');
     }
     setActiveStep(activeStep + 1);
   };
@@ -104,6 +109,7 @@ function MultiStepsForm() {
             Back
           </Button>
           <Box sx={{ flex: '1 1 auto' }} />
+          {/* TODO: disable button if data is invalid */}
           <Button type="submit" sx={{ mr: 1 }}>
             {isLastStep() ? 'Complete' : 'Next'}
           </Button>

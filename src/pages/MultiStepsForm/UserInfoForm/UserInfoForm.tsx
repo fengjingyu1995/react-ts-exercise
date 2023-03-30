@@ -32,6 +32,7 @@ function UserInfoForm({ userFormData, updateFormData }: UserInfoFormProps) {
         onChange={handleFormChange}
         required
       />
+      {/* TODO: add validation for phone number */}
       <TextField
         fullWidth
         margin="normal"
