@@ -18,9 +18,14 @@ export interface PokemonsObject {
 interface PokemonFormProps {
   userFormData: UserFormData;
   updateFormData: (data: Partial<UserFormData>) => void;
+  title: string;
 }
 
-function PokemonForm({ userFormData, updateFormData }: PokemonFormProps) {
+function PokemonForm({
+  userFormData,
+  updateFormData,
+  title,
+}: PokemonFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pokemons, setPokemons] = useState<PokemonsObject | null>(null);
   useEffect(() => {
@@ -50,6 +55,7 @@ function PokemonForm({ userFormData, updateFormData }: PokemonFormProps) {
 
   return (
     <div className="mt-10">
+      <h1 className="mb-5 text-3xl text-center">{title}</h1>
       <Autocomplete
         sx={{ width: '100%' }}
         value={userFormData.favoritePokemon || null}

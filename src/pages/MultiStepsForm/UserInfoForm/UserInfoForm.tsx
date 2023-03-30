@@ -5,15 +5,21 @@ import { UserFormData } from '../userForm.model';
 interface UserInfoFormProps {
   userFormData: UserFormData;
   updateFormData: (data: Partial<UserFormData>) => void;
+  title: string;
 }
 
-function UserInfoForm({ userFormData, updateFormData }: UserInfoFormProps) {
+function UserInfoForm({
+  userFormData,
+  updateFormData,
+  title,
+}: UserInfoFormProps) {
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     updateFormData({ [name]: value });
   };
   return (
     <div className="mt-10">
+      <h1 className="mb-5 text-3xl text-center">{title}</h1>
       <TextField
         fullWidth
         margin="normal"

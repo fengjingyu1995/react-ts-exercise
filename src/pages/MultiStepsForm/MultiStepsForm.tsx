@@ -8,6 +8,7 @@ import PokemonForm from './PokemonForm/PokemonForm';
 import UserForm from './UserInfoForm/UserInfoForm';
 import { UserFormData } from './userForm.model';
 import { useNavigate } from 'react-router-dom';
+import ReviewPage from './ReviewPage/ReviewPage';
 
 const steps = [
   'User Info',
@@ -89,13 +90,18 @@ function MultiStepsForm() {
             <UserForm
               userFormData={userFormData}
               updateFormData={updateFormData}
+              title={steps[0]}
             />
           )}
           {activeStep === 1 && (
             <PokemonForm
               userFormData={userFormData}
               updateFormData={updateFormData}
+              title={steps[0]}
             />
+          )}
+          {activeStep === 2 && (
+            <ReviewPage userFormData={userFormData} title={steps[0]} />
           )}
         </Box>
 
