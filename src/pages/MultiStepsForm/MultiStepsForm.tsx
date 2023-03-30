@@ -63,15 +63,7 @@ function MultiStepsForm() {
   const title = steps[activeStep];
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        height: '100vh',
-        margin: '0 150px;',
-      }}
-    >
+    <div className="flex flex-col justify-center h-screen mx-5 lg:mx-36 md:mx-16">
       <form onSubmit={handleNext}>
         <Stepper activeStep={activeStep}>
           {steps.map((label, index) => (
@@ -123,7 +115,7 @@ function MultiStepsForm() {
           </Button>
         </Box>
       </form>
-    </Box>
+    </div>
   );
 }
 
