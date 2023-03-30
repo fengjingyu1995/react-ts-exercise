@@ -3,4 +3,5 @@ export interface UserFormData {
   lastName: string;
   phoneNumber: string;
   address: string;
+  favoritePokemon: string;
 }

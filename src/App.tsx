@@ -1,15 +1,9 @@
 import React from 'react';
 import './App.css';
-import PokemonForm from './pages/PokemonForm/PokemonForm';
-// import UserForm from './pages/UserForm/UserForm';
+import MultiStepsForm from './pages/MultiStepsForm/MultiStepsForm';
 
 function App() {
-  return (
-    <>
-      {/* <UserForm /> */}
-      <PokemonForm />
-    </>
-  );
+  return <MultiStepsForm />;
 }
 
 export default App;
