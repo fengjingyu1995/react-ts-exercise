@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import MultiStepsForm from './pages/MultiStepsForm/MultiStepsForm';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Complete from './pages/Complete/PokemonForm';
+import Complete from './pages/Complete/Complete';
 
 function App() {
   return (
