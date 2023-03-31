@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { loadPokemonsWithType } from './loadPokemonsWithType';
 import { ListboxComponent } from '../../../components/ListboxComponent';
 import { StyledPopper } from '../../../components/PopperComponent';
 import { UserFormData } from '../userForm.model';
@@ -20,26 +19,18 @@ interface PokemonFormProps {
   userFormData: UserFormData;
   updateFormData: (name: keyof UserFormData, value: string) => void;
   title: string;
+  isLoadingPokemons: boolean;
+  pokemons: PokemonsObject | null;
 }
 
 function PokemonForm({
   userFormData,
   updateFormData,
   title,
+  isLoadingPokemons,
+  pokemons,
 }: PokemonFormProps) {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [pokemons, setPokemons] = useState<PokemonsObject | null>(null);
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      const pokemonsObject = await loadPokemonsWithType();
-      setPokemons(pokemonsObject);
-      setIsLoading(false);
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     const favoritePokemon = userFormData.favoritePokemon;
@@ -71,7 +62,7 @@ function PokemonForm({
     }
   }, [pokemons]);
 
-  if (isLoading || !options) return <div>Loading...</div>;
+  if (isLoadingPokemons || !options) return <div>Loading...</div>;
 
   return (
     <div className="mt-10 ">

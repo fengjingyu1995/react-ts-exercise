@@ -4,9 +4,9 @@ import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
 import React, { useState, useEffect } from 'react';
-import PokemonForm from './PokemonForm/PokemonForm';
+import PokemonForm, { PokemonsObject } from './PokemonForm/PokemonForm';
 import UserForm from './UserInfoForm/UserInfoForm';
-import { UserFormData, UserFormDataTouched } from './userForm.model';
+import { UserFormData } from './userForm.model';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReviewPage from './ReviewPage/ReviewPage';
 import {
@@ -15,6 +15,7 @@ import {
   saveUserFormDataToStorage,
 } from './userFormDataStorage';
 import { validateUserFormDataBySteps } from './validateUserFormDataBySteps';
+import { loadPokemonsWithType } from './PokemonForm/loadPokemonsWithType';
 
 const steps = [
   'User Info',
@@ -36,6 +37,8 @@ function MultiStepsForm() {
   const [userFormDataErrors, setUserFormDataErrors] = useState<
     Partial<UserFormData>
   >({});
+  const [isLoadingPokemons, setIsLoadingPokemons] = useState<boolean>(false);
+  const [pokemons, setPokemons] = useState<PokemonsObject | null>(null);
 
   const [activeStep, setActiveStep] = React.useState(0);
   const location = useLocation();
@@ -57,6 +60,13 @@ function MultiStepsForm() {
         setActiveStep(step);
       }
     }
+    const fetchPokemonData = async () => {
+      setIsLoadingPokemons(true);
+      const pokemonsObject = await loadPokemonsWithType();
+      setPokemons(pokemonsObject);
+      setIsLoadingPokemons(false);
+    };
+    fetchPokemonData();
   }, []);
 
   useEffect(() => {
@@ -147,6 +157,8 @@ function MultiStepsForm() {
               userFormData={userFormData}
               updateFormData={updateFormData}
               title={title}
+              isLoadingPokemons={isLoadingPokemons}
+              pokemons={pokemons}
             />
           )}
           {activeStep === 2 && (

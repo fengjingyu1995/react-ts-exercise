@@ -5,5 +5,3 @@ export interface UserFormData {
   address: string;
   favoritePokemon: string;
 }
-
-export type UserFormDataTouched = Record<keyof UserFormData, boolean>;
