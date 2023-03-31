@@ -50,7 +50,7 @@ function MultiStepsForm() {
     const step = Number(params.get('step'));
     if (step && !isNaN(step) && step < steps.length) {
       const { hasError } = validateUserFormDataBySteps(
-        userFormData,
+        data ?? userFormData,
         activeStep
       );
       if (!hasError) {
