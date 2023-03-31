@@ -5,6 +5,7 @@ import { loadPokemonsWithType } from './loadPokemonsWithType';
 import { ListboxComponent } from '../../../components/ListboxComponent';
 import { StyledPopper } from '../../../components/PopperComponent';
 import { UserFormData } from '../userForm.model';
+import axios from 'axios';
 
 interface Pokemon {
   url: string;
@@ -28,6 +29,8 @@ function PokemonForm({
 }: PokemonFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pokemons, setPokemons] = useState<PokemonsObject | null>(null);
+  const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -37,6 +40,23 @@ function PokemonForm({
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const favoritePokemon = userFormData.favoritePokemon;
+    if (favoritePokemon && pokemons) {
+      const name = userFormData.favoritePokemon.split('(')[0].trim();
+      const pokemon = pokemons[name];
+      if (pokemon && pokemon.imgUrl == null) {
+        axios.get(pokemon.url).then((response) => {
+          const imgUrl =
+            response.data?.sprites?.other?.dream_world?.front_default;
+          if (imgUrl) {
+            setSelectedPokemon({ ...pokemon, imgUrl });
+          }
+        });
+      }
+    }
+  }, [userFormData.favoritePokemon, pokemons]);
 
   const handleChange = (event: any, newValue: string | null) => {
     if (newValue) {
@@ -54,7 +74,7 @@ function PokemonForm({
   if (isLoading || !options) return <div>Loading...</div>;
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 ">
       <h1 className="mb-5 text-3xl text-center">{title}</h1>
       <Autocomplete
         sx={{ width: '100%' }}
@@ -76,7 +96,14 @@ function PokemonForm({
         }
         renderGroup={(params) => params as unknown as React.ReactNode}
       />
-      {/* TODO: display image of selected pokemon below */}
+      {selectedPokemon?.imgUrl && (
+        <div className="flex justify-center mt-8 align-middle max-h-60">
+          <img
+            src={selectedPokemon.imgUrl}
+            alt={userFormData.favoritePokemon}
+          />
+        </div>
+      )}
     </div>
   );
 }
