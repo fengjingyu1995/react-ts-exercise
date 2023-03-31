@@ -3,7 +3,7 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Button from '@mui/material/Button';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PokemonForm from './PokemonForm/PokemonForm';
 import UserForm from './UserInfoForm/UserInfoForm';
 import { UserFormData } from './userForm.model';
@@ -29,10 +29,21 @@ function MultiStepsForm() {
     useState<UserFormData>(initialUserFormData);
   const [activeStep, setActiveStep] = React.useState(0);
 
+  useEffect(() => {
+    const savedUserFormData = localStorage.getItem('userFormData');
+    if (savedUserFormData) {
+      setUserFormData(JSON.parse(savedUserFormData));
+    }
+  }, []);
+
   const navigate = useNavigate();
 
   const updateFormData = (data: Partial<UserFormData>) => {
-    setUserFormData((prevUserFormData) => ({ ...prevUserFormData, ...data }));
+    setUserFormData((prevUserFormData) => {
+      const newUserFormData = { ...prevUserFormData, ...data };
+      localStorage.setItem('userFormData', JSON.stringify(newUserFormData));
+      return newUserFormData;
+    });
   };
 
   const totalSteps = () => {
