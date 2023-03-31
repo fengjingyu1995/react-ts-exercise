@@ -17,7 +17,7 @@ export interface PokemonsObject {
 
 interface PokemonFormProps {
   userFormData: UserFormData;
-  updateFormData: (data: Partial<UserFormData>) => void;
+  updateFormData: (name: keyof UserFormData, value: string) => void;
   title: string;
 }
 
@@ -40,7 +40,7 @@ function PokemonForm({
 
   const handleChange = (event: any, newValue: string | null) => {
     if (newValue) {
-      updateFormData({ favoritePokemon: newValue });
+      updateFormData('favoritePokemon', newValue);
     }
   };
   const options = useMemo(() => {

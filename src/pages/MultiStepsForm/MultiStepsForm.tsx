@@ -6,9 +6,15 @@ import Button from '@mui/material/Button';
 import React, { useState, useEffect } from 'react';
 import PokemonForm from './PokemonForm/PokemonForm';
 import UserForm from './UserInfoForm/UserInfoForm';
-import { UserFormData } from './userForm.model';
-import { useNavigate } from 'react-router-dom';
+import { UserFormData, UserFormDataTouched } from './userForm.model';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ReviewPage from './ReviewPage/ReviewPage';
+import {
+  loadUserFormDataFromStorage,
+  removeUserFormDataFromStorage,
+  saveUserFormDataToStorage,
+} from './userFormDataStorage';
+import { validateUserFormDataBySteps } from './validateUserFormDataBySteps';
 
 const steps = [
   'User Info',
@@ -27,21 +33,47 @@ const initialUserFormData = {
 function MultiStepsForm() {
   const [userFormData, setUserFormData] =
     useState<UserFormData>(initialUserFormData);
+  const [userFormDataErrors, setUserFormDataErrors] = useState<
+    Partial<UserFormData>
+  >({});
+
   const [activeStep, setActiveStep] = React.useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const savedUserFormData = localStorage.getItem('userFormData');
-    if (savedUserFormData) {
-      setUserFormData(JSON.parse(savedUserFormData));
+    const data = loadUserFormDataFromStorage();
+    if (data) {
+      setUserFormData(data);
+    }
+    const params = new URLSearchParams(location.search);
+    const step = Number(params.get('step'));
+    if (step && !isNaN(step) && step < steps.length) {
+      const { hasError } = validateUserFormDataBySteps(
+        userFormData,
+        activeStep
+      );
+      if (!hasError) {
+        setActiveStep(step);
+      }
     }
   }, []);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (activeStep != null) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('step', `${activeStep}`);
+      window.history.pushState({ path: newUrl.href }, '', newUrl.href);
+    }
+  }, [activeStep]);
 
-  const updateFormData = (data: Partial<UserFormData>) => {
+  const updateFormData = (name: keyof UserFormData, value: string) => {
     setUserFormData((prevUserFormData) => {
-      const newUserFormData = { ...prevUserFormData, ...data };
-      localStorage.setItem('userFormData', JSON.stringify(newUserFormData));
+      const newUserFormData = { ...prevUserFormData, [name]: value };
+      if (!!userFormDataErrors[name]) {
+        setUserFormDataErrors({ ...userFormDataErrors, [name]: undefined });
+      }
+      saveUserFormDataToStorage(newUserFormData);
       return newUserFormData;
     });
   };
@@ -56,11 +88,22 @@ function MultiStepsForm() {
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isLastStep()) {
-      // complete
-      navigate('/complete');
+
+    const { hasError, errors } = validateUserFormDataBySteps(
+      userFormData,
+      activeStep
+    );
+    if (!hasError) {
+      if (isLastStep()) {
+        // complete
+        navigate('/complete');
+        // reset data
+        removeUserFormDataFromStorage();
+      }
+      setActiveStep(activeStep + 1);
+    } else {
+      setUserFormDataErrors(errors);
     }
-    setActiveStep(activeStep + 1);
   };
 
   const handleBack = () => {
@@ -96,6 +139,7 @@ function MultiStepsForm() {
               userFormData={userFormData}
               updateFormData={updateFormData}
               title={title}
+              userFormDataErrors={userFormDataErrors}
             />
           )}
           {activeStep === 1 && (

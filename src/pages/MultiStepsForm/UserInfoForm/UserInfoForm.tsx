@@ -4,18 +4,20 @@ import { UserFormData } from '../userForm.model';
 
 interface UserInfoFormProps {
   userFormData: UserFormData;
-  updateFormData: (data: Partial<UserFormData>) => void;
+  updateFormData: (name: keyof UserFormData, value: string) => void;
   title: string;
+  userFormDataErrors: Partial<UserFormData>;
 }
 
 function UserInfoForm({
   userFormData,
   updateFormData,
+  userFormDataErrors,
   title,
 }: UserInfoFormProps) {
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    updateFormData({ [name]: value });
+    updateFormData(name as keyof UserFormData, value);
   };
   return (
     <div className="mt-10">
@@ -27,6 +29,8 @@ function UserInfoForm({
         label="First Name"
         value={userFormData.firstName}
         onChange={handleFormChange}
+        error={!!userFormDataErrors.firstName}
+        helperText={userFormDataErrors.firstName}
         required
       />
       <TextField
@@ -36,9 +40,10 @@ function UserInfoForm({
         label="Last Name"
         value={userFormData.lastName}
         onChange={handleFormChange}
+        error={!!userFormDataErrors.lastName}
+        helperText={userFormDataErrors.lastName}
         required
       />
-      {/* TODO: add validation for phone number */}
       <TextField
         fullWidth
         margin="normal"
@@ -46,6 +51,8 @@ function UserInfoForm({
         label="Phone Number"
         value={userFormData.phoneNumber}
         onChange={handleFormChange}
+        error={!!userFormDataErrors.phoneNumber}
+        helperText={userFormDataErrors.phoneNumber}
         required
       />
       <TextField
@@ -55,6 +62,8 @@ function UserInfoForm({
         label="Address"
         value={userFormData.address}
         onChange={handleFormChange}
+        error={!!userFormDataErrors.address}
+        helperText={userFormDataErrors.address}
         required
       />
     </div>
