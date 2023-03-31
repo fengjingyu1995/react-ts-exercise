@@ -29,6 +29,7 @@ const initialUserFormData = {
   phoneNumber: '',
   address: '',
   favoritePokemon: '',
+  selectedPokemonType: '',
 };
 
 function MultiStepsForm() {
@@ -39,6 +40,7 @@ function MultiStepsForm() {
   >({});
   const [isLoadingPokemons, setIsLoadingPokemons] = useState<boolean>(false);
   const [pokemons, setPokemons] = useState<PokemonsObject | null>(null);
+  const [pokemonTypes, setPokemonTypes] = useState<string[] | null>(null);
 
   const [activeStep, setActiveStep] = React.useState(0);
   const location = useLocation();
@@ -62,8 +64,9 @@ function MultiStepsForm() {
     }
     const fetchPokemonData = async () => {
       setIsLoadingPokemons(true);
-      const pokemonsObject = await loadPokemonsWithType();
+      const { pokemonsObject, pokemonTypes } = await loadPokemonsWithType();
       setPokemons(pokemonsObject);
+      setPokemonTypes(pokemonTypes);
       setIsLoadingPokemons(false);
     };
     fetchPokemonData();
@@ -159,6 +162,7 @@ function MultiStepsForm() {
               title={title}
               isLoadingPokemons={isLoadingPokemons}
               pokemons={pokemons}
+              pokemonTypes={pokemonTypes}
             />
           )}
           {activeStep === 2 && (

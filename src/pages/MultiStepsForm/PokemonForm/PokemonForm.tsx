@@ -5,6 +5,10 @@ import { ListboxComponent } from '../../../components/ListboxComponent';
 import { StyledPopper } from '../../../components/PopperComponent';
 import { UserFormData } from '../userForm.model';
 import axios from 'axios';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 interface Pokemon {
   url: string;
@@ -21,6 +25,7 @@ interface PokemonFormProps {
   title: string;
   isLoadingPokemons: boolean;
   pokemons: PokemonsObject | null;
+  pokemonTypes: string[] | null;
 }
 
 function PokemonForm({
@@ -29,14 +34,14 @@ function PokemonForm({
   title,
   isLoadingPokemons,
   pokemons,
+  pokemonTypes,
 }: PokemonFormProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
 
   useEffect(() => {
     const favoritePokemon = userFormData.favoritePokemon;
     if (favoritePokemon && pokemons) {
-      const name = userFormData.favoritePokemon.split('(')[0].trim();
-      const pokemon = pokemons[name];
+      const pokemon = pokemons[favoritePokemon];
       if (pokemon && pokemon.imgUrl == null) {
         axios.get(pokemon.url).then((response) => {
           const imgUrl =
@@ -54,19 +59,49 @@ function PokemonForm({
       updateFormData('favoritePokemon', newValue);
     }
   };
+
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    updateFormData('favoritePokemon', '');
+    updateFormData('selectedPokemonType', event.target.value);
+  };
   const options = useMemo(() => {
     if (pokemons) {
-      return Object.entries(pokemons).map(
-        ([name, { type }]) => `${name} (${type})`
-      );
+      let options = Object.entries(pokemons);
+      if (userFormData.selectedPokemonType !== 'All') {
+        options = options.filter(
+          ([_, { type }]) => type === userFormData.selectedPokemonType
+        );
+      }
+      return options.map(([name]) => `${name}`);
     }
-  }, [pokemons]);
+  }, [pokemons, userFormData.selectedPokemonType]);
 
   if (isLoadingPokemons || !options) return <div>Loading...</div>;
 
   return (
     <div className="mt-10 ">
       <h1 className="mb-5 text-3xl text-center">{title}</h1>
+      <div className="my-5">
+        <FormControl fullWidth>
+          <InputLabel id="SelectedPokemonType">
+            Select a pokemon type
+          </InputLabel>
+          <Select
+            labelId="SelectedPokemonType"
+            id="SelectedPokemonType-select"
+            value={userFormData.selectedPokemonType ?? 'All'}
+            label="Select a pokemon type"
+            onChange={handleSelectChange}
+          >
+            <MenuItem value={'All'}>All</MenuItem>
+            {pokemonTypes?.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
       <Autocomplete
         sx={{ width: '100%' }}
         value={userFormData.favoritePokemon || null}
@@ -88,7 +123,7 @@ function PokemonForm({
         renderGroup={(params) => params as unknown as React.ReactNode}
       />
       {selectedPokemon?.imgUrl && (
-        <div className="flex justify-center mt-8 align-middle max-h-60">
+        <div className="flex justify-center mt-8 align-middle max-h-48">
           <img
             src={selectedPokemon.imgUrl}
             alt={userFormData.favoritePokemon}

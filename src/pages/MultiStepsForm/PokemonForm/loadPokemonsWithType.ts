@@ -20,10 +20,11 @@ export const loadPokemonsWithType = async () => {
     },
     {} as PokemonsObject
   );
+  const pokemonTypes: string[] = types.map((type) => type.name);
   types.forEach(({ pokemon, name: typeName }) => {
     pokemon.forEach(({ pokemon: { name: pokemonName } }) => {
       pokemonsObject[pokemonName].type = typeName;
     });
   });
-  return pokemonsObject;
+  return { pokemonsObject, pokemonTypes };
 };
