@@ -16,6 +16,9 @@ import {
 } from './userFormDataStorage';
 import { validateUserFormDataBySteps } from './validateUserFormDataBySteps';
 import { loadPokemonsWithType } from './PokemonForm/loadPokemonsWithType';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+import { pushQueryParamToUrl } from '../../utils/pushQueryParamToUrl';
 
 const steps = [
   'User Info',
@@ -29,7 +32,7 @@ const initialUserFormData = {
   phoneNumber: '',
   address: '',
   favoritePokemon: '',
-  selectedPokemonType: '',
+  selectedPokemonType: 'All',
 };
 
 function MultiStepsForm() {
@@ -56,10 +59,12 @@ function MultiStepsForm() {
     if (step && !isNaN(step) && step < steps.length) {
       const { hasError } = validateUserFormDataBySteps(
         data ?? userFormData,
-        activeStep
+        step - 1
       );
       if (!hasError) {
         setActiveStep(step);
+      } else {
+        pushQueryParamToUrl('step', `${activeStep}`);
       }
     }
     const fetchPokemonData = async () => {
@@ -69,16 +74,9 @@ function MultiStepsForm() {
       setPokemonTypes(pokemonTypes);
       setIsLoadingPokemons(false);
     };
+
     fetchPokemonData();
   }, []);
-
-  useEffect(() => {
-    if (activeStep != null) {
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set('step', `${activeStep}`);
-      window.history.pushState({ path: newUrl.href }, '', newUrl.href);
-    }
-  }, [activeStep]);
 
   const updateFormData = (name: keyof UserFormData, value: string) => {
     setUserFormData((prevUserFormData) => {
@@ -106,21 +104,26 @@ function MultiStepsForm() {
       userFormData,
       activeStep
     );
-    if (!hasError) {
-      if (isLastStep()) {
-        // complete
-        navigate('/complete');
-        // reset data
-        removeUserFormDataFromStorage();
-      }
-      setActiveStep(activeStep + 1);
-    } else {
+    if (hasError) {
       setUserFormDataErrors(errors);
+      return;
+    }
+    if (isLastStep()) {
+      // complete
+      navigate('/complete');
+      // reset data
+      removeUserFormDataFromStorage();
+    } else {
+      const nextStep = activeStep + 1;
+      setActiveStep(nextStep);
+      pushQueryParamToUrl('step', `${nextStep}`);
     }
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    const prevActiveStep = activeStep - 1;
+    setActiveStep(prevActiveStep);
+    pushQueryParamToUrl('step', `${prevActiveStep}`);
   };
 
   const handleStep = (step: number) => () => {
@@ -176,12 +179,17 @@ function MultiStepsForm() {
             disabled={activeStep === 0}
             onClick={handleBack}
             sx={{ mr: 1 }}
+            startIcon={<ChevronLeft />}
           >
             Back
           </Button>
           <Box sx={{ flex: '1 1 auto' }} />
           {/* TODO: disable button if data is invalid */}
-          <Button type="submit" sx={{ mr: 1 }}>
+          <Button
+            type="submit"
+            sx={{ mr: 1 }}
+            endIcon={isLastStep() ? undefined : <ChevronRight />}
+          >
             {isLastStep() ? 'Complete' : 'Next'}
           </Button>
         </Box>

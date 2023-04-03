@@ -8,6 +8,7 @@ export const validateUserFormDataBySteps = (
   let hasError = false;
 
   for (const [key, value] of Object.entries(userFormData)) {
+    if (key === 'selectedPokemonType') continue;
     if (key === 'favoritePokemon' && curStep < 1) continue;
     if (!value.trim()) {
       hasError = true;

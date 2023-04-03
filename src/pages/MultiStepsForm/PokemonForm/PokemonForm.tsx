@@ -63,15 +63,19 @@ function PokemonForm({
   const handleSelectChange = (event: SelectChangeEvent) => {
     updateFormData('favoritePokemon', '');
     updateFormData('selectedPokemonType', event.target.value);
+    setSelectedPokemon(null);
   };
+
   const options = useMemo(() => {
     if (pokemons) {
       let options = Object.entries(pokemons);
+      const { selectedPokemonType } = userFormData;
       if (userFormData.selectedPokemonType !== 'All') {
         options = options.filter(
-          ([_, { type }]) => type === userFormData.selectedPokemonType
+          ([_, { type }]) => type === selectedPokemonType
         );
       }
+
       return options.map(([name]) => `${name}`);
     }
   }, [pokemons, userFormData.selectedPokemonType]);
@@ -89,7 +93,7 @@ function PokemonForm({
           <Select
             labelId="SelectedPokemonType"
             id="SelectedPokemonType-select"
-            value={userFormData.selectedPokemonType ?? 'All'}
+            value={userFormData.selectedPokemonType || 'All'}
             label="Select a pokemon type"
             onChange={handleSelectChange}
           >
